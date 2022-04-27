@@ -5,53 +5,41 @@ import fizzbuzz from "./fizzbuzz";
 
 describe("FizzBuzz", () => {
 
-  test("The number in the first position to be 1", () => {
-    const numbers = fizzbuzz();
-  
-    expect(numbers[0]).toBe(1);
-  });
-  
-  test("The number in the second position to be 2", () => {
-    const numbers = fizzbuzz();
-  
-    expect(numbers[1]).toBe(2);
-  });
-  
-  test("The number in the third position is Fizz", () => {
-    const numbers = fizzbuzz();
-  
-    expect(numbers[2]).toBe("Fizz");
-  });
-
-  test("The number in the fifth position is Buzz", () => {
-    const numbers = fizzbuzz();
-  
-    expect(numbers[4]).toBe("Buzz");
-  });
-
-  test("The number in the sixth position is Fizz", () => {
-    const numbers = fizzbuzz();
-  
-    expect(numbers[5]).toBe("Fizz");
-  });
-
-  test("The number in the tenth position is Buzz", () => {
-    const numbers = fizzbuzz();
-  
-    expect(numbers[9]).toBe("Buzz");
-  });
-
-  test("The number in the 15th position is FizzBuzz", () => {
-    const numbers = fizzbuzz();
-  
-    expect(numbers[14]).toBe("FizzBuzz");
-  });
-
   test("There are 100 numbers", () => {
     const numbers = fizzbuzz();
   
     expect(numbers.length).toBe(100);
   });
 
+  test.each([13, 23, 31, 73, 83])
+  ( "%i is fizz because it has a three", (num) => {
+    const numbers = fizzbuzz();
+    expect(numbers[num-1]).toBe("Fizz");
+  
+  })
+
+  test.each([52, 56, 58, 59])
+  ("%i is Buzz because it has a five", (num) => {
+    const numbers = fizzbuzz();
+
+    expect(numbers[num-1]).toBe("Buzz");
+  });
+
+  test.each([35, 53])
+  ("%i is fizzBuzz if it has a three & five", (num) => {
+    // const hasThreeFive = [30, 15, 45, 60, 75];
+    const numbers = fizzbuzz();
+
+    expect(numbers[num-1]).toBe("FizzBuzz");
+  
+  })
+
+  test.each([54, 57, 51])
+  ("%i is fizzBuzz because it has a five and is multiple of 3", (num) => {
+    const numbers = fizzbuzz();
+
+    expect(numbers[num-1]).toBe("FizzBuzz");
+  
+  })
 })
 
