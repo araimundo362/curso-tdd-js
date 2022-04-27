@@ -1,7 +1,192 @@
 import Shop from "./Shop";
 import Item from "./Item";
 
-describe("At the end of the day", () => {
+const MIN_QUALITY = 0;
+const MAX_QUALITY = 50;
+
+test("sellIn decreases every day", () => {
+  const item = regularItem(1, 30);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.sellIn).toEqual(0);
+});
+
+test("regular items' quality decreases every day", () => {
+  const item = regularItem(1, 3);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(2);
+});
+
+test("expired regular items' quality decreases twice as fast once sellIn has passed", () => {
+  const item = regularItem(0, 3);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(1);
+});
+
+test("regular items' quality never decreases below the minimum quality", () => {
+  const item = regularItem(5, 0);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(MIN_QUALITY);
+});
+
+test("expired regular items' quality never decreases below the minimum quality", () => {
+  const item = regularItem(0, 1);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(MIN_QUALITY);
+});
+
+test("aged brie increases quality by 1", () => {
+  const item = agedBrie(5, 8);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(9);
+});
+
+test("aged brie quality never increases over the maximun quality", () => {
+  const item = agedBrie(5, MAX_QUALITY);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(MAX_QUALITY);
+});
+
+test("expired aged brie quality never increases over the maximun quality", () => {
+  const item = agedBrie(0, 49);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(MAX_QUALITY);
+});
+
+test("expired aged brie increases quality by 2", () => {
+  const item = agedBrie(0, 8);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(10);
+});
+
+test("sulfuras never changes", () => {
+  const item = sulfuras(1, 80);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(80);
+  expect(item.sellIn).toEqual(1);
+});
+
+test("backstage increase quality by 1 when sellIn is greater than 10", () => {
+  const item = backstagePasses(11, 6);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(7);
+});
+
+test("backstage increase quality by 2 when sellIn is inside [10, 5)", () => {
+  const item1 = backstagePasses(10, 6);
+  const item2 = backstagePasses(6, 20);
+  const shop = new Shop([item1, item2]);
+
+  shop.updateQuality();
+
+  expect(item1.quality).toEqual(8);
+  expect(item2.quality).toEqual(22);
+});
+
+test("backstage increase quality by 3 when sellIn is inside [5, 0)", () => {
+  const item1 = backstagePasses(5, 6);
+  const item2 = backstagePasses(1, 20);
+  const shop = new Shop([item1, item2]);
+
+  shop.updateQuality();
+
+  expect(item1.quality).toEqual(9);
+  expect(item2.quality).toEqual(23);
+});
+
+test("backstage quality drops to 0 after the concert", () => {
+  const item = backstagePasses(0, 6);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(0);
+});
+
+test("backstage quality never increases over the maximun quality when increasing by 1", () => {
+  const item = backstagePasses(11, MAX_QUALITY);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(MAX_QUALITY);
+});
+
+test("backstage quality never increases over the maximun quality when increasing by 2", () => {
+  const item = backstagePasses(8, 49);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(MAX_QUALITY);
+});
+
+test("backstage quality never increases over the maximun quality when increasing by 3", () => {
+  const item = backstagePasses(4, 48);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(MAX_QUALITY);
+});
+
+test("nonsense test to have no surviving mutants and complete coverage", () => {
+  const item = sulfuras(-1, 80);
+  const shop = new Shop([item]);
+
+  shop.updateQuality();
+
+  expect(item.quality).toEqual(80);
+});
+
+function regularItem(sellIn, quality) {
+  return new Item("foo", sellIn, quality);
+}
+
+function agedBrie(sellIn, quality) {
+  return new Item("Aged Brie", sellIn, quality);
+}
+
+function sulfuras(sellIn, quality) {
+  return new Item("Sulfuras, Hand of Ragnaros", sellIn, quality);
+}
+
+function backstagePasses(sellIn, quality) {
+  return new Item("Backstage passes to a TAFKAL80ETC concert", sellIn, quality)
+}
+/*describe("At the end of the day", () => {
 
 
   const maxQuality = 50;
@@ -149,3 +334,5 @@ function regularItem(sellIn, quality) {
 function expiredRegularItem(quality) {
   return regularItem(0, quality);
 }
+*/
+
